@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -37,8 +39,12 @@ public class Docente {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaIngreso;
 
-    @Column(name = "Titulo", nullable = false, length = 100)
+    @Column(name = "TITULO", nullable = false, length = 100)
     private String titulo;
+
+    @ManyToOne
+    @JoinColumn(name = "COD_ESPECIALIDAD", referencedColumnName = "COD_ESPECIALIDAD", insertable = false, updatable = false)
+    private Especialidad especialidad;
 
     @Version
     private Long version;
