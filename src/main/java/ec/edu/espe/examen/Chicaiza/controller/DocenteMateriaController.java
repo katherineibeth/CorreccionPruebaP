@@ -1,27 +1,27 @@
 package ec.edu.espe.examen.Chicaiza.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import ec.edu.espe.examen.Chicaiza.domain.DocenteMateria;
 import ec.edu.espe.examen.Chicaiza.service.DocenteMateriaService;
 
-public class DocenteMateriaController {
+@RestController
+@RequestMapping("/docente-materia")
+public class DocenteMateriaCotroller {
 
-    @Autowired
-    private DocenteMateriaService planificacionService;
+    private final DocenteMateriaService docenteMateriaService;
 
-    @PostMapping("/asignar")
-    public ResponseEntity<Void> asignarDocenteAMateria(@RequestBody DocenteMateria docenteMateria) {
-        try {
-            planificacionService.asignarDocenteAMateria(docenteMateria);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (DocenteNotFoundException | MateriaNotFoundException | AsignacionInvalidaException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public DocenteMateriaCotroller(DocenteMateriaService docenteMateriaService) {
+        this.docenteMateriaService = docenteMateriaService;
     }
-    
+
+    @PostMapping("/guardar")
+    public ResponseEntity<DocenteMateria> GuardarPM(@RequestBody DocenteMateria docenteMateria){
+        return new ResponseEntity<>(docenteMateriaService.crearDocenteMateria(docenteMateria), HttpStatus.OK);
+    }
 }
