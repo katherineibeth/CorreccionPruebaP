@@ -2,34 +2,44 @@ package ec.edu.espe.examen.Chicaiza.service;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ec.edu.espe.examen.Chicaiza.dao.DocenteRepository;
 import ec.edu.espe.examen.Chicaiza.dao.EspecialidadRepository;
 import ec.edu.espe.examen.Chicaiza.domain.Docente;
 import ec.edu.espe.examen.Chicaiza.domain.Especialidad;
-import jakarta.persistence.EntityNotFoundException;
+import ec.edu.espe.examen.Chicaiza.service.Exception.CreacionException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class DocenteService {
 
-    @Autowired
     private DocenteRepository docenteRepository;
-
-    @Autowired
     private EspecialidadRepository especialidadRepository;
 
-    public void crearDocente(Docente docente) throws EntityNotFoundException, FechaIngresoInvalidaException {
-        Especialidad especialidad = especialidadRepository.findById(docente.getCodEspecialidad())
-                .orElseThrow(() -> new EntityNotFoundException("Especialidad no encontrada"));
+    public DocenteService(DocenteRepository docenteRepository, EspecialidadRepository especialidadRepository) {
+        this.docenteRepository = docenteRepository;
+        this.especialidadRepository = especialidadRepository;
+    }
 
-        if (docente.getFechaIngreso().before(new Date())) {
-            throw new Exception("La fecha de ingreso debe ser mayor a la fecha actual");
+    @Transactional
+    public Docente crearDocente(Docente docente) {
+        Especialidad especialidad = especialidadRepository.findByCodigo(docente.getCodEspecialidad());
+        if (especialidad == null) {
+            throw new RuntimeException("La especialidad con código " + docente.getCodEspecialidad() + " no existe.");
         }
 
-        docente.setCodEspecialidad(especialidad);
-        docenteRepository.save(docente);
+        Date fechaActual = new Date(System.currentTimeMillis());
+        Date fechaIngresoDocente = docente.getFechaIngreso(); 
+
+        if (fechaIngresoDocente.before(fechaActual)) {
+            throw new RuntimeException("La fecha es invalida");
+        }
+
+        try {
+            return this.docenteRepository.save(docente); 
+        } catch (Exception e) {
+            throw new CreacionException("Error Al Crear Docente: " + docente.toString(), e);
+        }
     }
 }
-
