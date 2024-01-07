@@ -1,6 +1,7 @@
 package ec.edu.espe.examen.Chicaiza.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import ec.edu.espe.examen.Chicaiza.dao.DocenteMateriaRepository;
@@ -9,26 +10,33 @@ import ec.edu.espe.examen.Chicaiza.dao.MateriaRepository;
 import ec.edu.espe.examen.Chicaiza.domain.Docente;
 import ec.edu.espe.examen.Chicaiza.domain.DocenteMateria;
 import ec.edu.espe.examen.Chicaiza.domain.Materia;
+import ec.edu.espe.examen.Chicaiza.service.Exception.CreacionException;
+
 
 @Service
 public class DocenteMateriaService {
-    
-     @Autowired
-    private DocenteMateriaRepository docenteMateriaRepository;
+    private final DocenteRepository docenteRepository;
+    private final MateriaRepository materiaRepository;
+    private final DocenteMateriaRepository docenteMateriaRepository;
 
-    @Autowired
-    private DocenteRepository docenteRepository;
+    public DocenteMateriaService(DocenteRepository docenteRepository, MateriaRepository materiaRepository, DocenteMateriaRepository docenteMateriaRepository) {
+        this.docenteRepository = docenteRepository;
+        this.materiaRepository = materiaRepository;
+        this.docenteMateriaRepository = docenteMateriaRepository;
+    }
 
-    @Autowired
-    private MateriaRepository materiaRepository;
+    public DocenteMateria crearDocenteMateria(DocenteMateria docenteMateria) {
+        try {
+            Optional<Docente> docente = docenteRepository.findById(docenteMateria.getPK().getCodDocente());
+            Optional<Materia> materia = materiaRepository.findById(docenteMateria.getPK().getCodMateria());
 
-    public void asignarDocenteAMateria(DocenteMateria docenteMateria) throws DocenteNotFoundException, MateriaNotFoundException, AsignacionInvalidaException {
-        Docente docente = docenteRepository.findById(docenteMateria.getDocente().getCodDocente())
-                .orElseThrow(() -> new DocenteNotFoundException("Docente no encontrado"));
-
-        Materia materia = materiaRepository.findById(docenteMateria.getMateria().getCodMateria())
-                .orElseThrow(() -> new MateriaNotFoundException("Materia no encontrada"));
-
-
-        docenteMateriaRepository.save(docenteMateria);
+            if (docente.isPresent() && materia.isPresent()) {
+                return this.docenteMateriaRepository.save(docenteMateria);
+            } else {
+                throw new RuntimeException("Los datos son inválidos");
+            }
+        } catch (Exception e) {
+            throw new CreacionException("Error al crear el registro: " + docenteMateria.toString(), e);
+        }
+    }
 }
