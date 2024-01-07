@@ -3,8 +3,8 @@ package ec.edu.espe.examen.Chicaiza.domain;
 import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -19,15 +19,8 @@ import lombok.Setter;
 @Table(name = "DOCENTE_MATERIA")
 public class DocenteMateria {
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "COD_DOCENTE", nullable = false)
-    private Docente docente;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "COD_MATERIA", nullable = false)
-    private Materia materia;
+    @EmbeddedId
+    private DocenteMateriaPK pK;
 
     @Column(name = "PERIODO", nullable = false, length = 10)
     private String periodo;
@@ -45,20 +38,25 @@ public class DocenteMateria {
     @Temporal(TemporalType.TIMESTAMP)
     private Timestamp fechaUltimoCambio;
 
+     @ManyToOne
+    @JoinColumn(name = "COD_DOCENTE", referencedColumnName = "COD_DOCENTE", insertable = false, updatable = false)
+    private Docente docente;
+
     public DocenteMateria() {
     }
 
-    public DocenteMateria(Docente docente, Materia materia) {
-        this.docente = docente;
-        this.materia = materia;
+    public DocenteMateria(DocenteMateriaPK pK) {
+        this.pK = pK;
     }
 
     @Override
     public String toString() {
-        return "DocenteMateria [docente=" + docente + ", materia=" + materia + ", periodo=" + periodo
-                + ", alumnosMatriculados=" + alumnosMatriculados + ", estado=" + estado + ", promedioCurso="
-                + promedioCurso + ", fechaUltimoCambio=" + fechaUltimoCambio + "]";
+        return "DocenteMateria [pK=" + pK + ", periodo=" + periodo + ", alumnosMatriculados=" + alumnosMatriculados
+                + ", estado=" + estado + ", promedioCurso=" + promedioCurso + ", fechaUltimoCambio=" + fechaUltimoCambio
+                + "]";
     }
+
+    
 
     
 
