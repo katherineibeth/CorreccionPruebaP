@@ -1,71 +1,67 @@
 package ec.edu.espe.examen.Chicaiza.domain;
 
+import java.sql.Timestamp;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "ESPECIALIDAD")
-public class Especialidad {
+@Table(name = "DOCENTE_MATERIA")
+public class DocenteMateria {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "COD_ESPECIALIDAD", nullable = false)
-    private String codEspecialidad;
+    @EmbeddedId
+    private DocenteMateriaPK pK;
 
-    @Column(name = "NOMBRE", nullable = false, length = 100)
-    private String nombre;
+    @Column(name = "PERIODO", nullable = false, length = 10)
+    private String periodo;
 
-    @Version
-    private Long version;
+    @Column(name = "ALUMNOS_MATRICULADOS", nullable = false)
+    private Integer alumnosMatriculados;
 
-    public Especialidad() {
+    @Column(name = "ESTADO", nullable = false, length = 3)
+    private String estado;
+
+    @Column(name = "PROMEDIO_CURSO", nullable = false)
+    private Double promedioCurso;
+
+    @Column(name = "FECHA_ULTIMO_CAMBIO", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp fechaUltimoCambio;
+
+     @ManyToOne
+    @JoinColumn(name = "COD_DOCENTE", referencedColumnName = "COD_DOCENTE", insertable = false, updatable = false)
+    private Docente docente;
+
+    public DocenteMateria() {
     }
 
-    public Especialidad(String codEspecialidad) {
-        this.codEspecialidad = codEspecialidad;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((codEspecialidad == null) ? 0 : codEspecialidad.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Especialidad other = (Especialidad) obj;
-        if (codEspecialidad == null) {
-            if (other.codEspecialidad != null)
-                return false;
-        } else if (!codEspecialidad.equals(other.codEspecialidad))
-            return false;
-        return true;
+    public DocenteMateria(DocenteMateriaPK pK) {
+        this.pK = pK;
     }
 
     @Override
     public String toString() {
-        return "Especialidad [codEspecialidad=" + codEspecialidad + ", nombre=" + nombre + ", version=" + version + "]";
+        return "DocenteMateria [pK=" + pK + ", periodo=" + periodo + ", alumnosMatriculados=" + alumnosMatriculados
+                + ", estado=" + estado + ", promedioCurso=" + promedioCurso + ", fechaUltimoCambio=" + fechaUltimoCambio
+                + "]";
     }
 
     
+
     
+
+}
+   
 
     
 
