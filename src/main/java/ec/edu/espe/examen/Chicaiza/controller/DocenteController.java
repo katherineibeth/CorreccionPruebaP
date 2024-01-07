@@ -1,6 +1,5 @@
 package ec.edu.espe.examen.Chicaiza.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,16 +14,15 @@ import ec.edu.espe.examen.Chicaiza.service.DocenteService;
 @RequestMapping("/docente")
 public class DocenteController {
     
-    @Autowired
+   
     private DocenteService docenteService;
 
-    @PostMapping
-    public ResponseEntity<Void> crearDocente(@RequestBody Docente docente) {
-        try {
-            docenteService.crearDocente(docente);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (EspecialidadNotFoundException | FechaIngresoInvalidaException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public DocenteController(DocenteService docenteService) {
+        this.docenteService = docenteService;
+    }
+
+    @PostMapping("/crear")
+    public ResponseEntity<Docente> Guardar(@RequestBody Docente docente) {
+        return new ResponseEntity<>(docenteService.crearDocente(docente), HttpStatus.OK);
     }
 }
