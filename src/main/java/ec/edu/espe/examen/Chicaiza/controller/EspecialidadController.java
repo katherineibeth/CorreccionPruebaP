@@ -1,6 +1,5 @@
 package ec.edu.espe.examen.Chicaiza.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,22 +14,25 @@ import org.springframework.web.bind.annotation.RestController;
 import ec.edu.espe.examen.Chicaiza.domain.Especialidad;
 import ec.edu.espe.examen.Chicaiza.service.EspecialidadService;
 
+
 @RestController
 @RequestMapping("/especialidad")
 public class EspecialidadController {
-    
-    @Autowired
+
     private EspecialidadService especialidadService;
 
-    @PostMapping
-    public ResponseEntity<Void> crearEspecialidad(@RequestBody Especialidad especialidad) {
-        especialidadService.crearEspecialidad(especialidad);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public EspecialidadController(EspecialidadService especialidadService) {
+        this.especialidadService = especialidadService;
+    }
+
+    @PostMapping("/crear")
+    public ResponseEntity<Especialidad> Guardar(@RequestBody Especialidad especialidad) {
+        return new ResponseEntity<>(especialidadService.crearEspecialidad(especialidad), HttpStatus.OK);
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<Especialidad>> obtenerEspecialidadesPorNombre(@RequestParam String patronNombre) {
-        List<Especialidad> especialidades = especialidadService.obtenerEspecialidadesPorNombre(patronNombre);
-        return new ResponseEntity<>(especialidades, HttpStatus.OK);
+    public Especialidad buscarPorNombre(@RequestParam String patron) {
+        return especialidadService.buscarPatron(patron);
     }
+
 }
